@@ -1,0 +1,268 @@
+@charset "utf-8";
+
+.clear {
+    clear: both;
+}
+.open-url {
+    cursor: pointer;
+}
+#logo-small {
+    background: url(/images/company_logo-small.png) 0 5px no-repeat transparent;
+    height: 35px;
+    width: 94px;
+}
+
+.ui-jqgrid select,
+.ui-jqgrid input {
+   width: auto;
+   padding: 1px 6px;
+}
+.error_field,
+.error {
+    border: 1px solid red !important;
+}
+.required_flag {
+    color: red;
+}
+/*** Index ***/
+#logo {
+    background: url(/images/company_logo.png) 0 0 no-repeat transparent;
+    height: 48px;
+    width: 150px;
+}
+.login-form-container {
+    width: 225px;
+    margin-left: 85px;
+    float: left;
+}
+.index {
+    margin: 0;
+}
+/*** Dashboard ***/
+.widget-title,
+.modal-header,
+.table th,
+div.dataTables_wrapper
+.ui-widget-header {
+    background-color: #EFEFEF;
+    background-image: -moz-linear-gradient(center top , #FDFDFD 0%, #EAEAEA 100%);
+    border-bottom: 1px solid #CDCDCD;
+    height: 36px;
+}
+.widget-box {
+    background: none repeat scroll 0 0 #F9F9F9;
+    border: 1px solid #CDCDCD;
+    clear: both;
+    margin-bottom: 16px;
+    overflow: hidden !important;
+    position: relative;
+    min-width: 360px;
+}
+.widget-title span.icon {
+    border-right: 1px solid #CDCDCD;
+    float: left;
+    opacity: 0.7;
+    padding: 9px 11px 6px 12px;
+}
+.widget-title .label {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) inset, 0 1px 0 #FFFFFF;
+    float: right;
+    margin: 8px 15px 0 0;
+    padding: 3px 5px 2px;
+}
+.widget-title h5 {
+    color: #666666;
+    float: left;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 9px 12px 7px;
+    text-shadow: 0 1px 0 #FFFFFF;
+    margin: 0;
+}
+.widget-hero {
+    min-height: 100px;
+    padding: 5px;
+}
+.widget-hero:hover {
+    border: 2px solid #aaf;
+    padding: 3px;
+    cursor: pointer;
+}
+a.widget-link {
+    text-decoration: none;
+    color: #333;
+}
+.recent-posts  {
+    border-bottom: 1px dotted #AEBDC8;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0 5px;
+}
+.message-box {
+    border: 1px dotted;
+    margin: 5px;
+    padding: 5px;
+}
+.message-body {
+    line-height: 1.5em;
+    padding: 5px;
+}
+.message-title {
+    border-bottom: 1px dotted;
+    font-size: 1.2em;
+}
+.message-info {
+    font-size: 0.75em;
+    font-style: italic;
+    line-height: 0;
+    padding: 0 0 2px;
+    text-align: right;
+}
+.message-system {
+    margin-bottom: 10px;
+}
+/*** Footer ***/
+.footer-powered-by {
+    margin-bottom: 5px;
+}
+.footer-powered-by img {
+    margin-top: -6px;
+}
+.footer .app-version {
+    font-size: 9px;
+    color: #928B8B;
+}
+/*** Links ***/
+#user-links .actions {
+    display: inline-block;
+}
+#user-links .actions i {
+    visibility: hidden;
+}
+#user-links li:hover i {
+ visibility: visible;
+ cursor: pointer;
+}
+.edit-actions,
+.add-actions {
+    float: right;
+    margin: 0 0 20px 10px;
+}
+#user-links .thumbnails {
+    margin-left: 10px;
+}
+#user-links .thumbnails > li {
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+/*** Other ***/
+/* icons */
+/*[class^="icon-large-"],
+[class*=" icon-large-"],
+.nav > .active > a > [class^="icon-large-"],
+.nav > .active > a > [class*=" icon-large-"],
+.dropdown-menu > li > a:hover > [class^="icon-large-"],
+.dropdown-menu > li > a:hover > [class*=" icon-large-"],
+.dropdown-menu > .active > a > [class^="icon-large-"],
+.dropdown-menu > .active > a > [class*=" icon-large-"] {
+  background-image: url("/images/icons4.png");
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin-top: 1px;
+  *margin-right: .3em;
+  line-height: 25px;
+  vertical-align: text-top;
+  background-position: 25px 25px;
+  background-repeat: no-repeat;
+}
+.icon-large-home {
+  background-position: -9px -5px;
+}
+.icon-large-web {
+  background-position: -270px -79px;
+}
+.icon-large-user {
+  background-position: -121px -117px;
+}
+.icon-large-log {
+  background-position: -270px -161px;
+}
+.icon-large-report {
+  background-position: -270px -41px;
+}
+.icon-large-link {
+  background-position: -121px -79px;
+}
+.icon-large-app {
+  background-position: -158px -3px;
+}*/
+
+/*** Agency Registration ***/
+#agency-add {
+    float: right;
+    margin-top: 10px;
+}
+
+/*** Agency Registration Details ***/
+#agency_registration_details .field_label {
+    clear: left;
+    float: left;
+    font-weight: bold;
+    width: 150px;
+    margin-right: 25px;
+}
+#AGCY_LOC_CAP_WRAP {
+    width: 100%;
+    display: block;
+    min-height: 40px;
+}
+#AGCY_LOC_CAP_WRAP .field_input  {
+    margin-left: 175px;
+}
+.grid_center {
+    width: 940px;
+    margin: 0 auto;
+}
+
+/*** Agency Registration Create ***/
+#agency-create-form {
+    display: block;
+    width: 100%;
+}
+#agency-create-form .form-column {
+    display: block;
+    min-width: 26%;
+    float: left;
+}
+
+@media (max-width: 480px) {
+    #agency-create-form .form-column {
+        min-width: 33%;
+    }
+}
+@media (min-width: 481px) and (max-width: 767px) {
+    #agency-create-form .form-column {
+        min-width: 50%;
+    }
+}
+@media (min-width: 768px) and (max-width: 959px) {
+    #agency-create-form .form-column {
+        min-width: 50%;
+    }
+}
+@media (min-width: 960px) and (max-width: 1199px) {
+    #agency-create-form .form-column {
+        min-width: 33%;
+    }
+}
+@media (min-width: 1200px) {
+    #agency-create-form .form-column {
+        min-width: 33%;
+    }
+}
+
+#AGCY_LOC_CAP_CREATE {
+    width: 97%;
+    height: 150px;
+}
