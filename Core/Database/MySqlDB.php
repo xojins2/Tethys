@@ -154,7 +154,7 @@ protected function query()
         public function exec()
         {
         	$this->query();  //execute the sql
-		    $out = [];
+		    $out = array();
 					
 		    while ($row = $this->fetch($this->query)){ 
 		        $out[] = $row; 

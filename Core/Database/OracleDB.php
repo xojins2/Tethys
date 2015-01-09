@@ -156,7 +156,7 @@ class OracleDB
             $declaration_names      = '';
             $this->curs_count                  = 0;
             $this->curs = array();
-            $this->c->debug->db = [];
+            $this->c->debug->db = array();
 
             //build the declairations
             $this->buildDeclarations();

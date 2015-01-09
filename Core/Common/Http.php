@@ -47,7 +47,10 @@ trait Http
             return $output;
         }
     }
-
+	
+	/**
+	 * get the vars from the get request
+	 */
     public function getGetVars() {
         $output = array();
         foreach($_GET as $key => $value) {
