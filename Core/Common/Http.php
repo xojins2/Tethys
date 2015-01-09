@@ -156,7 +156,7 @@ trait Http
 
     public function checkDesktopRedirect()
     {
-        // Determine to which TAMS2 site to redirect to (based on requested URL) if DESKTOP browser detected.
+        // Determine to which site to redirect to (based on requested URL) if DESKTOP browser detected.
         //
         $redirectUrl = HTTP.$_SERVER['SERVER_NAME'];
         $redirectUrl = str_replace('//m', '//', $redirectUrl); // Remove the m. from the mobile url

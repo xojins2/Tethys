@@ -35,7 +35,7 @@ class Index extends \Core\Model\CoreModel
 {
     public function Index()
     {
-        $this->dbConnect();
+        //$this->dbConnect();
         return true;
     }
 

@@ -29,33 +29,17 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/** Application Configuration Variables **/
+//Server Settings
+$c->server->db_user        = 'local_dev';   //oracle schema name
+$c->server->db_pass        = 'password';     //db password
+$c->server->db_name        = '//192.168.56.110:1521/orcl';   //db server to access
+$c->server->http           = 'http://';  //use http or https
+$c->server->app_path       = '/media/sf_Source/testcode/Tethys';   //the path on the filesystem where the controllers folder is
+$c->server->ds             = '/';   //the directory seperator to use based on the operating system
 
-//general application settings
-$c->server->url        = '';   //http request var to access the uri
-$c->server->logout_url = '/Index/logout';   //the url using the servername for logging out
-$c->server->no_auth_url    = '/Index/unauthorized';   //the controller action that defines a failed auth attempt
-$c->server->login_url  = '/Index';   //the url for loggin into the system
-
-//template settings
-$c->settings->template_path = '/App/Application/Templates/';
-$c->settings->template_tag_regex = "#\{\('(\w+)'\)}#";
-
-//database
-$c->server->db_type = '\Core\Database\MySqlDB';
-
-
-//DO NOT EDIT BELOW THIS LINE
-
-//set the server name
-$c->server->name = str_replace('www.', '', $_SERVER['SERVER_NAME']);
-
-//set the file to load
-$server_file = '../Config/' . $c->server->name . '.php';
-
-//load the config file for that server
-if(file_exists($server_file)) {
-    require_once($server_file);
-} else {
-    die($c->server->name.' Is Not Accessable.');
-}
+//application settings
+$c->settings->core_version   = '14.1.1.1';   //app version
+$c->settings->module_label   = 'Tethys 14.1 Test';    //app name
+$c->settings->dev_env        = true;   //dev environment sets profiling and debug error messages
+$c->settings->max_file_size  = 5242880;  //5mb
+$c->settings->admin_email    = '';   //default admin email
