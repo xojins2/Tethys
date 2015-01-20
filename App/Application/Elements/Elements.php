@@ -53,6 +53,4 @@
 $c->elements->element = new \Core\Model\Element;
 
 //define all the element names that are used by the application
-$c->elements->element->setElements(array('FIRST_NAME','LAST_NAME','FULL_NAME','DESCRIPTION','USER_NAME','LOGIN','PASSWORD'));
 
-$c->elements->element->FIRST_NAME[''];

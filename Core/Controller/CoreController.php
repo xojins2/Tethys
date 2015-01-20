@@ -39,7 +39,6 @@ class CoreController
 
     protected function __construct($controller,$action,$container)
     {
-        //$this->_c_name = $controller;
 
         $this->c = $container;
 

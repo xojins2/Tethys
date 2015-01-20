@@ -29,33 +29,48 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/** Application Configuration Variables **/
+namespace App\Application\Models;
 
-//general application settings
-$c->server->url        = '';   //http request var to access the uri
-$c->server->logout_url = '/Index/logout';   //the url using the servername for logging out
-$c->server->no_auth_url    = '/Index/unauthorized';   //the controller action that defines a failed auth attempt
-$c->server->login_url  = '/Index';   //the url for loggin into the system
+class Services extends \Core\Model\CoreModel
+{
+    public function getColors()
+    {
+        $this->dbConnect();
 
-//template settings
-$c->settings->template_path = '/App/Application/Templates/';
-$c->settings->template_tag_regex = "#\{\('(\w+)'\)}#";
+        $this->c->output->colors = $this->db->select('colors');
+        return true;
+    }
 
-//database
-$c->server->db_type = '\Core\Database\MySqlDB';
-$c->database->persistant = false;
+    public function getCities()
+    {
+        $this->dbConnect();
 
-//DO NOT EDIT BELOW THIS LINE
+        $this->c->output->cities = $this->db->select('cities');
+        return true;
+    }
 
-//set the server name
-$c->server->name = str_replace('www.', '', $_SERVER['SERVER_NAME']);
+    public function getVotes()
+    {
+        $this->dbConnect();
 
-//set the file to load
-$server_file = '../Config/' . $c->server->name . '.php';
+        if(!isset($this->c->database->color_id) && !$this->c->database->color_id){
+            $votes = $this->db->select('votes');
+        } else {
+            $votes = $this->db->select('votes','*',array('color_id'=>$this->c->database->color_id),array('int'));
+        }
+        $total = 0;
 
-//load the config file for that server
-if(file_exists($server_file)) {
-    require_once($server_file);
-} else {
-    die($c->server->name.' Is Not Accessable.');
+        if($this->c->database->records > 0){
+            if($this->c->database->records == 1){
+                $total = $votes['votes'];
+            } else {
+                foreach($votes as $vote){
+                    $total += $vote['votes'];
+                }
+            }
+        }
+        $this->c->output->votes = array('color_id'=>$this->c->database->color_id,'votes'=>$total);
+        return true;
+    }
 }
+

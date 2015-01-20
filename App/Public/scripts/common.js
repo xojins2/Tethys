@@ -1,85 +1,60 @@
-function postCheckAJAX(form, btn_id, service)
+function drawTable(data)
 {
-    if($("#"+btn_id).is("input")) {
-        orig_btn_val = $("#"+btn_id).val();
-        $("#"+btn_id).val("Processing. Please Wait.");
-    } else {
-        orig_btn_val = $("#"+btn_id).html();
-        $("#"+btn_id).html("Processing. Please Wait.");
+    for (var i = 0; i < data.length; i++) {
+        drawRow(data[i]);
     }
-    $("#"+btn_id).prop('diabled',true);
+    $("tbody td.color").click(function(e) {
+        var current_color = $(this).text();
+        var color_id = $(this).prev().text();
+        var vote_cell = $(this).next();
+        var total_votes = $("#datatable tfoot tr td.total-votes").text();
 
-    form = "#"+form;
-
-    $("input").removeClass("error_field");
-    $("select").removeClass("error_field");
-    success_value = false;
-
-    $.ajax({
-        type: 'POST',
-        url: "/Services/"+service,
-        data: $(form).serialize(),
-        success: function(data) {
-            if(data['JSON_STATUS']==1) {
-                $(form).attr("action",data['JSON_REDIRECT']);
-                success_value = true;
-                //form.submit();
-            } else {
-                error_message = "";
-                if(typeof(data['KEY']) != "undefined" && data['KEY'] !== null) {
-                    $.each(data['KEY'], function(index, value) {
-                            $("#"+index).addClass("error_field");
-                            error_message += value;
-                    });
-                } else if(typeof(data['MESSAGE']) != "undefined" && data['MESSAGE'] !== null) {
-                    error_message = data['MESSAGE'];
-                }
-
-                displayErrorMessageBox("#messages",error_message);
-                success_value = false;
-
-                //change the button value back
-                if($("#"+btn_id).is("input")){
-                    $("#"+btn_id).val(orig_btn_val);
-                } else {
-                    $("#"+btn_id).html(orig_btn_val);
-                }
-                $("#"+btn_id).prop('diabled',false);
+        $.ajax({
+            url: '/Services/getVotes/'+color_id,
+            type: "get",
+            dataType: "json",
+            success: function(data, textStatus, jqXHR) {
+                vote_cell.text(data.votes);
+                getTableTotals();
             }
-        },
-        dataType: "json",
-        async:false
-    });
-    return success_value;
-}
-
-function initializeValidation(form,button,service)
-{
-    $("#"+button).click(function(){
-        return postCheckAJAX(form,button,service);
-    });
-}
-
-function displayErrorMessageBox(selector, message) {
-    $(selector).html('<div class="alert"><button class="close" data-dismiss="alert">×</button>'+message+'</div>');
-    $(selector+" div.alert").addClass("alert-error");
-    $(selector).css("display","block");
-}
-
-function displaySuccessMessageBox(selector, message) {
-    $(selector).html('<div class="alert alert-success"><button class="close" data-dismiss="alert">×</button>'+message+'</div>');
-    $(selector+" div.alert").addClass("alert-success");
-    $(selector).css("display","block");
-}
-
-$.download = function(url, data, method){
-    if(url && data) {
-        var form = $('<form>', { action: url, method:(method || 'get')});
-        $.each(data, function(key, value) {
-            var input = $('<input />', { type: 'hidden', name: key, value: value}).appendTo(form);
         });
-        return form.appendTo('body').submit().remove();
-    }
-    throw new Error('Invalid File');
-};
+        ;
+    });
+}
+
+function drawRow(data)
+{
+    var row = $("<tr />")
+    $("#datatable tbody").append(row);
+    row.append($("<td>" + data.id + "</td>"));
+    row.append($("<td class='color'><span style='background-color:"+data.name+";'>&nbsp;&nbsp;</span>&nbsp;" + data.name + "</td>"));
+    row.append($("<td class='totals'> - </td>"));
+}
+
+function getTableData()
+{
+    $.ajax({
+        url: '/Services/getColors',
+        type: "post",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR) {
+            drawTable(data);
+        }
+    });
+}
+
+function getTableTotals()
+{
+    var total = 0;
+    $('#datatable tbody tr td.totals').each(function()
+    {
+        var value = parseInt($(this).text());
+        if (!isNaN(value))
+        {
+            total += value;
+        }
+    });
+
+    $('#datatable tfoot tr td.total-votes').text(total);
+}
 

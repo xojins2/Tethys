@@ -28,16 +28,47 @@
 * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*
+* Original License and Copyright
+* Based off the work of
+*  Copyright (C) 2012
+*     Ed Rackham (http://github.com/a1phanumeric/PHP-MySQL-Class)
+*  Changes to Version 0.8.1 copyright (C) 2013
+*    Christopher Harms (http://github.com/neurotroph)
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 namespace Core\Database;
 
-class OracleDB
+class MySqlDB
 {
+    // Base variables
+    public  $lastError;         // Holds the last error
+    public  $lastQuery;         // Holds the last query
+    public  $result;            // Holds the MySQL query result
+    public  $records;           // Holds the total number of records returned
+    public  $affected;          // Holds the total number of records affected
+    public  $rawResults;        // Holds raw 'arrayed' results
+    public  $arrayedResult;     // Holds an array of the result
+
+    private $databaseLink;      // Database Connection Link
+
     protected $c;
     protected $sql;
     protected $query = -1;
-	protected $row_count;
+    protected $row_count;
 
     public function __construct(\Core\System\DiContainer $c)
     {
@@ -45,122 +76,331 @@ class OracleDB
         $this->c = $c;
 
         //make a connect or reuse the existing one
-        $this->dbConnect();
+        $this->dbConnect($this->c->database->persistant);
 
         return true;
     }
 
-    protected function dbConnect()
+    /* *******************
+    * Class Destructor  *
+    * *******************/
+
+    function __destruct()
     {
-        if(!isset($this->c->server->db_handle)) {
-            //create a new connection
+        $this->closeConnection();
+    }
+
+    /* *******************
+    * Private Functions *
+    * *******************/
+
+    // Connects class to database
+    // $persistant (boolean) - Use persistant connection?
+    private function dbConnect($persistant = false)
+    {
+        //$this->CloseConnection();
+
+        if($persistant){
+            $this->c->server->db_handle = mysql_pconnect($this->c->server->db_server,$this->c->server->db_user,$this->c->server->db_pass);
+        }else{
             $this->c->server->db_handle = mysql_connect($this->c->server->db_server,$this->c->server->db_user,$this->c->server->db_pass);
         }
 
-        if(! $this->c->server->db_handle) {
-            //if for some reason we do not have a db connect at this point, then throw an exception
-            throw new \Exception('Cannot obtain a database handle');
+        if(!$this->c->server->db_handle){
+            $this->lastError = 'Could not connect to server: ' . mysql_error($this->c->server->db_handle);
             return false;
         }
-		
-		if(!mysql_select_db($this->c->server->db_name)){
-            //if an invalid database is selected, then throw an exception
-            throw new \Exception('Cannot obtain a database handle');
-            return false;			
-		}
-        //DebugBreak();
-        return true;
-    }
 
-	/**
-	 * Escape the SQL string
-	 * 
-	 * @param $string varchar
-	 * @return varchar
-	 */
-	public function escapeString($string)
-	{
-	    if(get_magic_quotes_runtime()) $string = stripslashes($string); 
-	    return mysql_real_escape_string($string,$this->c->server->db_handle); 
-	}
-
-    /**
-    * Set the name of the package
-    *
-    * @param string $package_name
-    * @return bool
-    */
-    public function setPackageName($package_name=null)
-    {
-        return true;
-    }
-
-    /**
-    * Set the name of the procedure name
-    *
-    * @param string $object_name
-    * @return bool
-    */
-    public function setObjectName($object_name=null)
-    {
-        return true;
-    }
-
-    /**
-    * Set the input array to pass into the procedure
-    *
-    * @param array $input_array
-    * @return bool
-    */
-    public function setInputParams($input_array = NULL)
-    {
-        return true;
-    }
-
-    protected function buildDeclarations()
-    {
-        return true;
-    }
-	
-	private function free_result()
-	{ 
-	    if ($this->query!=-1){ 
-	        $this->query_id=$query_id; 
-	    } 
-	    if($this->query!=0 && !mysql_free_result($this->query)){ 
-	        throw new \Exception('Cannot free sql reqult set');
-        	return false;
-	    }
-		return true;
-	}
-	
-protected function query()
-{ 
-    $this->query = mysql_query($this->sql, $this->c->server->db_handle); 
-
-    if (!$this->query){
-    	throw new \Exception('Cannot execute database query');
-        return false;
-    } 
-    $this->row_count = mysql_affected_rows($this->c->server->db_handle); 
-
-    return true; 
-}
-        /**
-        * Execute the procedure using the input parameters
-        *
-        * @return array $this->cursor
-        */
-        public function exec()
-        {
-        	$this->query();  //execute the sql
-		    $out = array();
-					
-		    while ($row = $this->fetch($this->query)){ 
-		        $out[] = $row; 
-		    } 
-		
-		    $this->free_result(); 
-		    return $out; 
+        if(!$this->UseDB()){
+            $this->lastError = 'Could not connect to database: ' . mysql_error($this->c->server->db_handle);
+            return false;
         }
+
+        $this->setCharset(); // TODO: remove forced charset find out a specific management
+        return true;
+    }
+
+    // Select database to use
+    private function UseDB()
+    {
+        if(!mysql_select_db($this->c->server->db_name, $this->c->server->db_handle)){
+            $this->lastError = 'Cannot select database: ' . mysql_error($this->c->server->db_handle);
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    // Performs a 'mysql_real_escape_string' on the entire array/string
+    private function SecureData($data, $types)
+    {
+        if(is_array($data)){
+            $i = 0;
+            foreach($data as $key=>$val){
+                if(!is_array($data[$key])){
+                    $data[$key] = $this->CleanData($data[$key], $types[$i]);
+                    $data[$key] = mysql_real_escape_string($data[$key], $this->c->server->db_handle);
+                    $i++;
+                }
+            }
+        }else{
+            $data = $this->CleanData($data, $types);
+            $data = mysql_real_escape_string($data, $this->c->server->db_handle);
+        }
+        return $data;
+    }
+
+    // clean the variable with given types
+    // possible types: none, str, int, float, bool, datetime, ts2dt (given timestamp convert to mysql datetime)
+    // bonus types: hexcolor, email
+    private function CleanData($data, $type = '')
+    {
+        switch($type) {
+            case 'none':
+                // useless do not reaffect just do nothing
+                //$data = $data;
+                break;
+            case 'str':
+            case 'string':
+                settype( $data, 'string');
+                break;
+            case 'int':
+            case 'integer':
+                settype( $data, 'integer');
+                break;
+            case 'float':
+                settype( $data, 'float');
+                break;
+            case 'bool':
+            case 'boolean':
+                settype( $data, 'boolean');
+                break;
+                // Y-m-d H:i:s
+                // 2014-01-01 12:30:30
+            case 'datetime':
+                $data = trim( $data );
+                $data = preg_replace('/[^\d\-: ]/i', '', $data);
+                preg_match( '/^([\d]{4}-[\d]{2}-[\d]{2} [\d]{2}:[\d]{2}:[\d]{2})$/', $data, $matches );
+                $data = $matches[1];
+                break;
+            case 'ts2dt':
+                settype( $data, 'integer');
+                $data = date('Y-m-d H:i:s', $data);
+                break;
+                // bonus types
+            case 'hexcolor':
+                preg_match( '/(#[0-9abcdef]{6})/i', $data, $matches );
+                $data = $matches[1];
+                break;
+            case 'email':
+                $data = filter_var($data, FILTER_VALIDATE_EMAIL);
+                break;
+            default:
+                $data = '';
+                break;
+        }
+        return $data;
+    }
+    /* ******************
+    * Public Functions *
+    * ******************/
+    // Executes MySQL query
+    public function executeSQL($query)
+    {
+        $this->lastQuery = $query;
+        if($this->result = mysql_query($query, $this->c->server->db_handle)){
+            if (gettype($this->result) === 'resource') {
+                $this->records  = @mysql_num_rows($this->result);
+                $this->affected = @mysql_affected_rows($this->c->server->db_handle);
+            } else {
+                $this->records  = 0;
+                $this->affected = 0;
+            }
+            $this->c->database->records = $this->records;
+            if($this->records > 0){
+                $this->arrayResults();
+                return $this->arrayedResult;
+            }else{
+                return true;
+            }
+        }else{
+            $this->lastError = mysql_error($this->c->server->db_handle);
+            return false;
+        }
+    }
+
+    public function commit(){
+        return mysql_query("COMMIT", $this->c->server->db_handle);
+    }
+
+    public function rollback(){
+        return mysql_query("ROLLBACK", $this->c->server->db_handle);
+    }
+
+    public function setCharset( $charset = 'UTF8' ) {
+        return mysql_set_charset ( $this->SecureData($charset,'string'), $this->c->server->db_handle);
+    }
+
+    // Adds a record to the database based on the array key names
+    public function insert($table, $vars, $exclude = '', $datatypes)
+    {
+        // Catch Exclusions
+        if($exclude == ''){
+            $exclude = array();
+        }
+        array_push($exclude, 'MAX_FILE_SIZE'); // Automatically exclude this one
+        // Prepare Variables
+        $vars = $this->SecureData($vars, $datatypes);
+        $query = "INSERT INTO `{$table}` SET ";
+        foreach($vars as $key=>$value){
+            if(in_array($key, $exclude)){
+                continue;
+            }
+            $query .= "`{$key}` = '{$value}', ";
+        }
+        $query = trim($query, ', ');
+        return $this->executeSQL($query);
+    }
+    // Deletes a record from the database
+    public function delete($table, $where='', $limit='', $like=false, $wheretypes)
+    {
+        $query = "DELETE FROM `{$table}` WHERE ";
+        if(is_array($where) && $where != ''){
+            // Prepare Variables
+            $where = $this->SecureData($where, $wheretypes);
+            foreach($where as $key=>$value){
+                if($like){
+                    $query .= "`{$key}` LIKE '%{$value}%' AND ";
+                }else{
+                    $query .= "`{$key}` = '{$value}' AND ";
+                }
+            }
+            $query = substr($query, 0, -5);
+        }
+        if($limit != ''){
+            $query .= ' LIMIT ' . $limit;
+        }
+        return $this->executeSQL($query);
+    }
+
+    // Gets a single row from $from where $where is true
+    public function select($from, $cols='*', $where='', $wheretypes='', $orderBy='', $limit='', $like=false, $operand='AND')
+    {
+        //wheretypes can be none, str, int, float, bool, datetime
+        // Catch Exceptions
+        if(trim($from) == ''){
+            return false;
+        }
+        $query = "SELECT {$cols} FROM `{$from}` WHERE ";
+        if(is_array($where) && $where != ''){
+            // Prepare Variables
+            $where = $this->SecureData($where, $wheretypes);
+            foreach($where as $key=>$value){
+                if($like){
+                    $query .= "`{$key}` LIKE '%{$value}%' {$operand} ";
+                }else{
+                    $query .= "`{$key}` = '{$value}' {$operand} ";
+                }
+            }
+            $query = substr($query, 0, -(strlen($operand)+2));
+        }else{
+            $query = substr($query, 0, -6);
+        }
+        if($orderBy != ''){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        if($limit != ''){
+            $query .= ' LIMIT ' . $limit;
+        }
+        return $this->executeSQL($query);
+    }
+
+    // Updates a record in the database based on WHERE
+    public function update($table, $set, $where, $exclude = '', $datatypes, $wheretypes)
+    {
+        // Catch Exceptions
+        if(trim($table) == '' || !is_array($set) || !is_array($where)){
+            return false;
+        }
+        if($exclude == ''){
+            $exclude = array();
+        }
+        array_push($exclude, 'MAX_FILE_SIZE'); // Automatically exclude this one
+        $set     = $this->SecureData($set, $datatypes);
+        $where     = $this->SecureData($where,$wheretypes);
+        // SET
+        $query = "UPDATE `{$table}` SET ";
+        foreach($set as $key=>$value){
+            if(in_array($key, $exclude)){
+                continue;
+            }
+            $query .= "`{$key}` = '{$value}', ";
+        }
+        $query = substr($query, 0, -2);
+        // WHERE
+        $query .= ' WHERE ';
+        foreach($where as $key=>$value){
+            $query .= "`{$key}` = '{$value}' AND ";
+        }
+        $query = substr($query, 0, -5);
+        return $this->executeSQL($query);
+    }
+
+    // 'Arrays' a single result
+    public function arrayResult()
+    {
+        $this->arrayedResult = mysql_fetch_assoc($this->result) or die (mysql_error($this->c->server->db_handle));
+        return $this->arrayedResult;
+    }
+
+    // 'Arrays' multiple result
+    public function arrayResults()
+    {
+        if($this->records == 1){
+            return $this->arrayResult();
+        }
+        $this->arrayedResult = array();
+        while ($data = mysql_fetch_assoc($this->result)){
+            $this->arrayedResult[] = $data;
+        }
+        return $this->arrayedResult;
+    }
+
+    // 'Arrays' multiple results with a key
+    public function arrayResultsWithKey($key='id')
+    {
+        if(isset($this->arrayedResult)){
+            unset($this->arrayedResult);
+        }
+        $this->arrayedResult = array();
+        while($row = mysql_fetch_assoc($this->result)){
+            foreach($row as $theKey => $theValue){
+                $this->arrayedResult[$row[$key]][$theKey] = $theValue;
+            }
+        }
+        return $this->arrayedResult;
+    }
+
+    // Returns last insert ID
+    public function lastInsertID()
+    {
+        return mysql_insert_id($this->c->server->db_handle);
+    }
+
+    // Return number of rows
+    public function countRows($from, $where='')
+    {
+        $result = $this->select($from, $where, '', '', false, 'AND','count(*)');
+        return $result["count(*)"];
+    }
+
+    // Closes the connections
+    public function closeConnection()
+    {
+        if($this->c->server->db_handle){
+            // Commit before closing just in case :)
+            $this->commit();
+            mysql_close($this->c->server->db_handle);
+        }
+    }
 }

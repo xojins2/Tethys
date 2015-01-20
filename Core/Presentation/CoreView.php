@@ -49,56 +49,26 @@
 
           $file = $this->c->server->app_path.$this->c->settings->template_path.$type;
           $h = fopen($file,"r");
-          $this->c->output->header = fread($h,filesize($file));
+          return fread($h,filesize($file));
           return true;
       }
 
-      //might not be needed
       protected function loadHeader()
       {
-          $this->loadTemplate($this->c->settings->header_template);
+          $this->c->output->header = $this->loadTemplate($this->c->settings->header_template);
           return true;
-
-          /*
-          $file = $this->c->server->app_path.$this->c->settings->template_path.$this->c->settings->header_template;
-          $h = fopen($file,"r");
-          $this->c->output->header = fread($h,filesize($file));
-          return true;
-          */
       }
 
-      //might not be neeeded
       protected function loadFooter()
       {
-          $this->loadTemplate($this->c->settings->footer_template);
+          $this->c->output->footer =$this->loadTemplate($this->c->settings->footer_template);
           return true;
-
-          /*
-          $file = $this->c->server->app_path.$this->c->settings->template_path.$this->c->settings->footer_template;
-          $h = fopen($file,"r");
-          $this->c->output->footer = fread($h,filesize($file));
-          return true;
-          */
       }
 
       protected function loadBody()
       {
-          $this->loadTemplate($this->c->settings->action_template);
+          $this->c->output->body =$this->loadTemplate($this->c->settings->action_template);
           return true;
-
-          /*
-          //get the template to use
-          $file = $this->c->server->app_path.$this->c->settings->template_path.$this->c->settings->action_template;
-
-          //open the file and read it
-          $h = fopen($file,"r");
-          $this->c->output->body = fread($h,filesize($file));
-
-          //this is from the elements
-          //$this->c->output->body .= $this->c->html;
-
-          return true;
-          */
       }
 
       protected function getFileTags()

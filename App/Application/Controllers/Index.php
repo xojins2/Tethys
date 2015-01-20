@@ -37,6 +37,7 @@
       public function __construct($controller,$action,$container)
       {
           parent::__construct($controller,$action,$container);
+        $this->c->output->json = false;
           return true;
       }
 
@@ -46,16 +47,6 @@
           $this->createView();
 
           $this->outputHtml();
-
-          return true;
-      }
-
-      public function GetUserData()
-      {
-          $this->createModel();
-          $this->createView();
-
-          $this->outputJson($this->c->output->cursor);
 
           return true;
       }

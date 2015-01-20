@@ -36,9 +36,6 @@ class Index extends \Core\Presentation\CoreView
 
     public function Index()
     {
-        //$elem = new \Core\Presentation\Elements\FormInput();
-        //$elem->elemRender($this->c);
-
         $this->loadHeader();
         $this->loadFooter();
         $this->loadBody();

@@ -54,7 +54,6 @@ function __autoload($class) {
     }
     $fileName .= str_replace('_', $c->server->ds, $class) . '.php';
     $fileName = $c->server->app_path.$c->server->ds.$fileName;
-//DebugBreak();
     if(file_exists($fileName)){
         require $fileName;
         return true;

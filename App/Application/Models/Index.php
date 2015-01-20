@@ -35,19 +35,6 @@ class Index extends \Core\Model\CoreModel
 {
     public function Index()
     {
-        //$this->dbConnect();
-        return true;
-    }
-
-    public function GetUserData()
-    {
-        $this->dbConnect();
-
-        $this->c->database->package_name = 'PKG_REFERENCE';
-        $this->c->database->object_name = 'P_GET_SKILLS';
-        //$this->db->setInputParams([]);
-
-        $this->c->output->cursor = $this->db->exec();
         return true;
     }
 }

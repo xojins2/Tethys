@@ -1,7 +1,7 @@
 <?php
   //php 5.4 demo file
 
-  trait Message_Core
+  trait  Message_Core
   {
       public function getTestString()
       {

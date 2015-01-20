@@ -29,33 +29,26 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/** Application Configuration Variables **/
+namespace App\Application\Views;
 
-//general application settings
-$c->server->url        = '';   //http request var to access the uri
-$c->server->logout_url = '/Index/logout';   //the url using the servername for logging out
-$c->server->no_auth_url    = '/Index/unauthorized';   //the controller action that defines a failed auth attempt
-$c->server->login_url  = '/Index';   //the url for loggin into the system
+class Services extends \Core\Presentation\CoreView
+{
+    public function getColors()
+    {
+        $this->loadBody();
+        return true;
+    }
 
-//template settings
-$c->settings->template_path = '/App/Application/Templates/';
-$c->settings->template_tag_regex = "#\{\('(\w+)'\)}#";
+    public function getCities()
+    {
+        $this->loadBody();
+        return true;
+    }
 
-//database
-$c->server->db_type = '\Core\Database\MySqlDB';
-$c->database->persistant = false;
+    public function getVotes()
+    {
+        $this->loadBody();
+        return true;
+    }
 
-//DO NOT EDIT BELOW THIS LINE
-
-//set the server name
-$c->server->name = str_replace('www.', '', $_SERVER['SERVER_NAME']);
-
-//set the file to load
-$server_file = '../Config/' . $c->server->name . '.php';
-
-//load the config file for that server
-if(file_exists($server_file)) {
-    require_once($server_file);
-} else {
-    die($c->server->name.' Is Not Accessable.');
 }

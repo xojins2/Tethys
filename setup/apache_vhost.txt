@@ -1,0 +1,16 @@
+<VirtualHost a3k.localhost.localdomain:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /media/sf_Source/testcode/a3k/App/Public
+	<Directory /media/sf_Source/testcode/a3k
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride all
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/a3k.error.log
+
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/a3k.access.log combined
+</VirtualHost>

@@ -35,7 +35,7 @@ session_start();
 date_default_timezone_set('America/New_York');
 
 //set xhprof output - set to true to allow xhprof to profile site, false to turn off
-define('USE_XHPROF',false);
+define('USE_XHPROF',true);
 
 //xhprof profiling section
 (USE_XHPROF && extension_loaded('xhprof'))?include_once dirname(__FILE__).'/../../Core/Utils/xhprof/header.php':'';
@@ -55,7 +55,7 @@ new \Core\System\Init($c);
 
 
 //end the profiling session
-(USE_XHPROF && extension_loaded('xhprof'))?include_once dirname(__FILE__).'/../../Core/Utils/xhprof/footer.php':'';
+(USE_XHPROF && extension_loaded('xhprof') && !$c->output->json)?include_once dirname(__FILE__).'/../../Core/Utils/xhprof/footer.php':'';
 
 ?>
 

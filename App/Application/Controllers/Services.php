@@ -33,63 +33,47 @@ namespace App\Application\Controllers;
 
 class Services extends \Core\Controller\CoreController
 {
-
-    //need to setup the services controller
-    //have to figure out
-    //constructor
-    //json
-    //loading dictionaries
-    //validation
-
-
     public function __construct($controller,$action,$container)
     {
         parent::__construct($controller,$action,$container);
+        $this->c->output->json = true;
         return true;
-    }
-
-    protected function servicesConstructor($public=false, $section)
-    {
-        $this->parent_section = $section;
-
-        //load the parent constructor
-        $this->loadParentConstructor($public);
-
-        //define that this is a service call that uses JSON
-        $this->set('is_service', TRUE);
-        $this->set('useJson',    TRUE);
-        $_SESSION['serviceCall'] = true;
     }
 
     /**
-    * Check if the user has auth rights to the resource
+    * get the list of colors from the database
     *
-    * @param array $input_array
     */
-    public function checkLogin()
+    public function getColors()
     {
-        //load the parent constructor
-        $this->servicesConstructor(false, 'Index');
+        $this->createModel();
 
-        $login_auth = ($this->checkUserAuth()) ? true : false;
-        $this->set('login_auth', $login_auth);
-
-        if(!$login_auth) return false;
-
-        //validate the fields
-        $this->validateFields();
-
-        //check if we should call the db proc
-        $this->checkValidationResults();
-
-        //check to see if there is a database error
-        if(!$this->checkDatabaseCode()) {
-            //we have a return code so get the message
-            $this->set('db_message', $this->{$this->model}->getClientLabel($this->db_return['PO_MESSAGE']));
-            return false;
-        }
-
+        $this->outputJson($this->c->output->colors);
         return true;
     }
+
+    /**
+    * get the list of cities from the database
+    */
+    public function getCities()
+    {
+        $this->createModel();
+
+        $this->outputJson($this->c->output->cities);
+        return true;
+    }
+
+    /**
+    * get the count of votes from the database
+    */
+    public function getVotes($id=false)
+    {
+        $this->c->database->color_id = $id;
+        $this->createModel();
+
+        $this->outputJson($this->c->output->votes);
+        return true;
+    }
+
 }
 ?>

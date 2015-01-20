@@ -38,8 +38,6 @@ class CommonController extends \Core\Controller\CoreController
     {
         parent::__construct($controller,$action,$container);
 
-        //handle auth
-
         return true;
     }
 
