@@ -29,7 +29,7 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace App\Application\Models;
+namespace App\Application\v1\Models;
 
 class Index extends \Core\Model\CoreModel
 {

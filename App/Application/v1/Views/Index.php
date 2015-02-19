@@ -29,7 +29,7 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace App\Application\Views;
+namespace App\Application\v1\Views;
 
 class Index extends \Core\Presentation\CoreView
 {

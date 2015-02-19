@@ -41,12 +41,39 @@ class CoreModel
     {
         $this->c = $c;
 
+        //initialize some arrays
+        $this->c->database->limit_columns = false;
+
         return true;
     }
 
     protected function dbConnect()
     {
         $this->db = new $this->c->server->db_type($this->c);
+        return true;
+    }
+
+    /**
+    * Filter the data returned from the datbase based on the defined
+    * limit columns
+    *
+    */
+    protected function limitResults()
+    {
+        if($this->c->database->limit_columns == false)
+            return true;
+
+        $new_arr = [];
+        foreach($this->c->output->data as $key=>$value){
+            foreach($value as $k=>$v){
+                if(in_array($k,$this->c->database->limit_columns)){
+                    $new_arr[$key][$k] = $v;
+                }
+            }
+        }
+
+        $this->c->output->data = $new_arr;
+
         return true;
     }
 

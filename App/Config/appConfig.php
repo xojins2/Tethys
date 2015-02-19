@@ -37,12 +37,7 @@ $c->server->logout_url = '/Index/logout';   //the url using the servername for l
 $c->server->no_auth_url    = '/Index/unauthorized';   //the controller action that defines a failed auth attempt
 $c->server->login_url  = '/Index';   //the url for loggin into the system
 
-//template settings
-$c->settings->template_path = '/App/Application/Templates/';
-$c->settings->template_tag_regex = "#\{\('(\w+)'\)}#";
-
 //database
-$c->server->db_type = '\Core\Database\MySqlDB';
 $c->database->persistant = false;
 
 //DO NOT EDIT BELOW THIS LINE

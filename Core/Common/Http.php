@@ -34,8 +34,8 @@ trait Http
 {
     public function getPostVars($key=false) {
         $output = array();
-        foreach($_POST as $value) {
-            $output[] = filter_input(INPUT_POST,$value,FILTER_SANITIZE_SPECIAL_CHARS);
+        foreach($_POST as $k=>$value) {
+            $output[$k] = filter_input(INPUT_POST,$k,FILTER_SANITIZE_SPECIAL_CHARS);
         }
         if($key) {
             if(isset($output[$key])) {
@@ -47,14 +47,14 @@ trait Http
             return $output;
         }
     }
-	
+
 	/**
 	 * get the vars from the get request
 	 */
-    public function getGetVars() {
+    public function getGetVars($key=false) {
         $output = array();
-        foreach($_GET as $key => $value) {
-            $output[] = filter_input(INPUT_GET,$key,FILTER_SANITIZE_SPECIAL_CHARS);
+        foreach($_GET as $k => $value) {
+            $output[$k] = filter_input(INPUT_GET,$k,FILTER_SANITIZE_SPECIAL_CHARS);
         }
         if($key) {
             if(isset($output[$key])) {
@@ -116,12 +116,13 @@ trait Http
         $url = ltrim($url,'/');
         $urlArray = explode("/",$url);
 
-        if($urlArray[0] == 'php54')
-            array_shift($urlArray);   //temp shift to work inside another folder
-        if($urlArray[0] == 'App')
-            array_shift($urlArray);   //temp shift to work inside another folder
-        if($urlArray[0] == 'Public')
-            array_shift($urlArray);   //temp shift to work inside another folder
+        //DebugBreak();
+        //check to see if the version is set
+        if(preg_match('/v[0-9][.]?[0-9]?/',$urlArray[0])){
+            $version = $urlArray[0];
+            array_shift($urlArray);
+        } else
+            $version = false;
 
         $controller = $urlArray[0];
 
@@ -132,12 +133,12 @@ trait Http
         $action = isset($urlArray[0])?$urlArray[0]:null;
 
         //if there is no action, the default action is index
-        !isset($action)?$action='Index':'';
+        !isset($action)||$action==""?$action='Index':'';
 
         array_shift($urlArray);
         $queryString = $urlArray;
 
-        return array('controller'=>$controller,'action'=>$action,'queryString'=>$queryString);
+        return array('controller'=>$controller,'action'=>$action,'queryString'=>$queryString,'version'=>$version);
     }
 
     public function checkBrowserVersion()
@@ -181,6 +182,40 @@ trait Http
     {
         header('Location: '.$url);
         exit(0);
+    }
+
+    public function checkMethod()
+    {
+        $method = $this->getRequestType();
+        if ($method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
+            if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE') {
+                $method = 'DELETE';
+            } else if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
+                $method = 'PUT';
+            } else {
+                ThrowError('Bad header');
+            }
+        }
+
+        switch($method) {
+            case 'DELETE':
+            case 'POST':
+                $request = $this->getPostVars();
+                break;
+            case 'PUT':
+            case 'GET':
+                $request = $this->getGetVars();
+                break;
+            default:
+                ThrowError('Bad Method');
+        }
+
+        return $request;
+    }
+
+    public function getRequestType()
+    {
+        return $_SERVER['REQUEST_METHOD'];
     }
 }
 

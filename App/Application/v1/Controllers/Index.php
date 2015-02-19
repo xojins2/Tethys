@@ -29,18 +29,25 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//Server Settings
-$c->server->db_user        = 'example';   //oracle schema name
-$c->server->db_pass        = 'password1';     //db password
-$c->server->db_name        = 'protectpal';   //db server to access
-$c->server->db_server      = 'localhost';
-$c->server->http           = 'http://';  //use http or https
-$c->server->app_path       = '/media/sf_Source/testcode/Tethys';   //the path on the filesystem where the controllers folder is
-$c->server->ds             = '/';   //the directory seperator to use based on the operating system
+  namespace App\Application\v1\Controllers;
 
-//application settings
-$c->settings->core_version   = '14.1.1.1';   //app version
-$c->settings->module_label   = 'Tethys 14.1 Test';    //app name
-$c->settings->dev_env        = true;   //dev environment sets profiling and debug error messages
-$c->settings->max_file_size  = 5242880;  //5mb
+  class Index extends \App\Application\v1\Controllers\CommonController
+  {
 
+      public function __construct($controller,$action,$container)
+      {
+          parent::__construct($controller,$action,$container);
+        $this->c->output->json = false;
+          return true;
+      }
+
+      public function Index()
+      {
+          $this->createModel();
+          $this->createView();
+
+          $this->outputHtml();
+
+          return true;
+      }
+  }

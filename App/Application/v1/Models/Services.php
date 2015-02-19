@@ -29,26 +29,49 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace App\Application\Views;
+namespace App\Application\v1\Models;
 
-class Services extends \Core\Presentation\CoreView
+class Services extends \Core\Model\CoreModel
 {
+    /**
+    * Return the list of colors from the database
+    *
+    */
     public function getColors()
     {
-        $this->loadBody();
+        $this->dbConnect();
+        $this->c->output->data = $this->db->select('colors');
         return true;
-    }
 
-    public function getCities()
-    {
-        $this->loadBody();
-        return true;
     }
 
     public function getVotes()
     {
-        $this->loadBody();
+        $this->dbConnect();
+
+        $this->c->output->data = $this->db->select('votes');
+
+        return true;
+
+        if(!isset($this->c->database->color_id) && !$this->c->database->color_id){
+            $votes = $this->db->select('votes');
+        } else {
+            $votes = $this->db->select('votes','*',array('color_id'=>$this->c->database->color_id),array('int'));
+        }
+        $total = 0;
+
+        if($this->c->database->records > 0){
+            if($this->c->database->records == 1){
+                $total = $votes['votes'];
+            } else {
+                foreach($votes as $vote){
+                    $total += $vote['votes'];
+                }
+            }
+        }
+
+        $this->c->output->data = array('color_id'=>$this->c->database->color_id,'votes'=>$total);
         return true;
     }
-
 }
+

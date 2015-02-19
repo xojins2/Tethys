@@ -40,15 +40,25 @@ class Init
         //explode the url and get the controller, model, action
         $url_array = $this->explodeURL();
 
+        //get any request array
+        $c->server->request = $this->checkMethod();
+        $c->server->request_type = $this->getRequestType();
+
         //redirect to the login page if there is an auth issue
         if($url_array['action'] == $c->server->logout_url || $url_array['action'] == $c->server->no_auth_url) {
             session_destroy();
             $this->redirectUser($c->server->login_url);
         }
 
+        //set the version to the default defined in the site config if not passed in
+        if(!$url_array['version'])
+            $url_array['version'] = $c->server->version;
+        else
+            $c->server->version = $url_array['version'];
+
         //dynamically create the controller object
         $controller_name   = $url_array['controller'];
-        $controller        = '\\App\\Application\\Controllers\\'.ucwords($controller_name);
+        $controller        = '\\App\\Application\\'.$url_array['version'].'\\Controllers\\'.ucwords($controller_name);
         $dispatch          = new $controller($controller_name,$url_array['action'],$c);
 
         //if the method being called exists, then call it

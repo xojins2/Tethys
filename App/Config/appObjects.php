@@ -40,11 +40,13 @@ require_once('../../Core/System/DiContainer.php');
 //create a new app container to hold all the settings
 $c = new \Core\System\DiContainer();
 
+/*
 //create a user sub-container
 $c->user = $c->asShared(function ($c)
 {
         return new \Core\System\DiContainer();
 });
+*/
 
 //create a server sub-container
 $c->server = $c->asShared(function ($c)
@@ -58,11 +60,13 @@ $c->settings = $c->asShared(function ($c)
         return new \Core\System\DiContainer();
 });
 
+/*
 //create a data sub-container
 $c->elements = $c->asShared(function ($c)
 {
         return new \Core\System\DiContainer();
 });
+*/
 
 //create a db sub-container
 $c->database = $c->asShared(function ($c)
@@ -76,8 +80,10 @@ $c->output = $c->asShared(function ($c)
         return new \Core\System\DiContainer();
 });
 
+
 //create an output sub-container
 $c->debug = $c->asShared(function ($c)
 {
         return new \Core\System\DiContainer();
 });
+

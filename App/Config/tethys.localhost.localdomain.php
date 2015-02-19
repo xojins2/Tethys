@@ -37,9 +37,14 @@ $c->server->http           = 'http://';  //use http or https
 $c->server->app_path       = '/media/sf_Source/testcode/Tethys';   //the path on the filesystem where the controllers folder is
 $c->server->ds             = '/';   //the directory seperator to use based on the operating system
 
+//Database settings
+//$c->server->db_type = '\Core\Database\OracleDB';
+$c->server->db_type = '\Core\Database\StubDB';        //uses JSON stub data
+
 //application settings
 $c->settings->core_version   = '14.1.1.1';   //app version
 $c->settings->module_label   = 'Tethys 14.1 Test';    //app name
 $c->settings->dev_env        = true;   //dev environment sets profiling and debug error messages
 $c->settings->max_file_size  = 5242880;  //5mb
 $c->settings->admin_email    = '';   //default admin email
+$c->server->version        = 'v1';   //the default version to run the application under

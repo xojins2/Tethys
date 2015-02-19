@@ -14,7 +14,7 @@ function drawTable(data)
             type: "get",
             dataType: "json",
             success: function(data, textStatus, jqXHR) {
-                vote_cell.text(data.votes);
+                vote_cell.text(data.result[0].votes);
                 getTableTotals();
             }
         });
@@ -38,7 +38,7 @@ function getTableData()
         type: "post",
         dataType: "json",
         success: function(data, textStatus, jqXHR) {
-            drawTable(data);
+            drawTable(data.result);
         }
     });
 }

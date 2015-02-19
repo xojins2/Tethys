@@ -29,48 +29,41 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace App\Application\Models;
+namespace App\Application\v1\Controllers;
 
-class Services extends \Core\Model\CoreModel
+class Services extends \Core\Controller\CoreController
 {
+    public function __construct($controller,$action,$container)
+    {
+        parent::__construct($controller,$action,$container);
+        $this->c->output->json = true;
+        return true;
+    }
+
+    /**
+    * Return the list of colors from the database
+    *
+    */
     public function getColors()
     {
-        $this->dbConnect();
+        $this->createModel();
 
-        $this->c->output->colors = $this->db->select('colors');
+        $this->outputJson();
         return true;
+
     }
 
-    public function getCities()
+    /**
+    * get the count of votes from the database
+    */
+    public function getVotes($id=false)
     {
-        $this->dbConnect();
+        $this->c->database->color_id = $id;
+        $this->createModel();
 
-        $this->c->output->cities = $this->db->select('cities');
+        $this->outputJson();
         return true;
+
     }
 
-    public function getVotes()
-    {
-        $this->dbConnect();
-
-        if(!isset($this->c->database->color_id) && !$this->c->database->color_id){
-            $votes = $this->db->select('votes');
-        } else {
-            $votes = $this->db->select('votes','*',array('color_id'=>$this->c->database->color_id),array('int'));
-        }
-        $total = 0;
-
-        if($this->c->database->records > 0){
-            if($this->c->database->records == 1){
-                $total = $votes['votes'];
-            } else {
-                foreach($votes as $vote){
-                    $total += $vote['votes'];
-                }
-            }
-        }
-        $this->c->output->votes = array('color_id'=>$this->c->database->color_id,'votes'=>$total);
-        return true;
-    }
 }
-

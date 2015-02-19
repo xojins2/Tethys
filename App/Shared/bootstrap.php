@@ -61,3 +61,8 @@ function __autoload($class) {
         return false;
     }
 }
+
+function ThrowError($message)
+{
+    throw new \Exception($message);
+}

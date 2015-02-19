@@ -29,7 +29,7 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace App\Application\Controllers;
+namespace App\Application\v1\Controllers;
 
 class CommonController extends \Core\Controller\CoreController
 {
@@ -39,6 +39,35 @@ class CommonController extends \Core\Controller\CoreController
         parent::__construct($controller,$action,$container);
 
         return true;
+    }
+
+    /**
+    * Check to see if the input parameter data is set and that the correct
+    * number of elements are present for the procedure
+    *
+    * @param array $data
+    * @param int $element_count
+    */
+    protected function checkData($data,$required_element_count)
+    {
+        if ($data)
+            $data = explode(",",$data);
+
+        if(!is_array($data) || count($data) < $required_element_count){
+            ThrowError('Wrong parameters');
+        }
+
+        $this->c->database->input_data = $data;
+
+    }
+
+    protected function checkRequestType($type=false)
+    {
+        if($this->c->server->request_type != $type) {
+            $this->c->output->data = ['Bad Request'];
+            $this->outputJson(405);
+            ThrowError($this->c->output->data);
+        }
     }
 
 }

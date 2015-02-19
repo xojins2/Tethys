@@ -42,16 +42,20 @@ class CoreController
 
         $this->c = $container;
 
-        $this->c->settings->model  = '\\App\\Application\\Models\\'.ucwords($controller);
-        $this->c->settings->view   = '\\App\\Application\\Views\\'.ucwords($controller);
+        $this->c->settings->model  = '\\App\\Application\\'.$this->c->server->version.'\\Models\\'.ucwords($controller);
+        $this->c->settings->view   = '\\App\\Application\\'.$this->c->server->version.'\\Views\\'.ucwords($controller);
         $this->c->settings->header_template = '_header.html';
         $this->c->settings->footer_template = '_footer.html';
-        $this->c->settings->action_template = $action.'.html';
+        $this->c->settings->action_template = ucwords($controller).'_'.$action.'.html';
         $this->c->settings->action = $action;
 
         return true;
     }
 
+    /**
+    * Create a new model container and call it's method
+    *
+    */
     protected function createModel()
     {
         if(!is_object($this->model))
@@ -62,6 +66,10 @@ class CoreController
         return true;
     }
 
+    /**
+    * Create a new view container and call it's method
+    *
+    */
     protected function createView()
     {
         if(!is_object($this->view))
@@ -72,13 +80,10 @@ class CoreController
         return true;
     }
 
-    protected function createUser()
-    {
-        if(!is_object($this->c))
-            return false;
-
-    }
-
+    /**
+    * Print the header, body and footer to the screen
+    *
+    */
     protected function outputHtml()
     {
         echo $this->c->output->header;
@@ -88,11 +93,35 @@ class CoreController
         return true;
     }
 
-    protected function outputJson($value)
+    /**
+    * Encodes the data as JSON and prints it to the screen
+    *
+    * @param mixed $value
+    */
+    protected function outputJson($status = 200)
     {
-        echo json_encode($value);
+        header("Access-Control-Allow-Orgin: *");
+        header("Access-Control-Allow-Methods: *");
+        //header("Access-Control-Allow-Headers: Content-Type");
+        header('Content-Type: application/json');
+        header("HTTP/1.1 $status {$this->_requestStatus($status)}");
+        echo json_encode(array("result"=>$this->c->output->data,"total"=>count($this->c->output->data)));
         return true;
     }
 
+    /**
+    * Get the text to use for the request status
+    *
+    * @param int $code
+    */
+    private function _requestStatus($code) {
+        $status = array(
+            200 => 'OK',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            500 => 'Internal Server Error',
+        );
+        return ($status[$code])?$status[$code]:$status[500];
+    }
 }
 

@@ -35,7 +35,7 @@ session_start();
 date_default_timezone_set('America/New_York');
 
 //set xhprof output - set to true to allow xhprof to profile site, false to turn off
-define('USE_XHPROF',true);
+define('USE_XHPROF',false);
 
 //xhprof profiling section
 (USE_XHPROF && extension_loaded('xhprof'))?include_once dirname(__FILE__).'/../../Core/Utils/xhprof/header.php':'';
@@ -48,7 +48,7 @@ require_once('../Config/appConfig.php');
 require_once($c->server->app_path.$c->server->ds.'App'.$c->server->ds.'Shared'.$c->server->ds.'bootstrap.php');
 
 //load the elements that are used by the application
-require_once '../Application/Elements/Elements.php';
+//require_once '../Application/Elements/Elements.php';
 
 //initialize the application
 new \Core\System\Init($c);

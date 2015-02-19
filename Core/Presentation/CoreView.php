@@ -47,10 +47,9 @@
           if(!$type)
             return false;
 
-          $file = $this->c->server->app_path.$this->c->settings->template_path.$type;
+          $file = $this->c->server->app_path."/App/Application/{$this->c->server->version}/Templates/".$type;
           $h = fopen($file,"r");
           return fread($h,filesize($file));
-          return true;
       }
 
       protected function loadHeader()

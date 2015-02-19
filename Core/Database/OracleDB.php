@@ -47,6 +47,8 @@ class OracleDB
         //make a connect or reuse the existing one
         $this->dbConnect();
 
+        //create an empty parameter array
+        $this->c->database->input_params = [];
         return true;
     }
 
@@ -100,7 +102,9 @@ class OracleDB
     public function setInputParams($input_array = NULL)
     {
         if(isset($input_array)) {
-            $this->c->database->input_params = array_merge($this->c->database->input_params, $input_array);
+            $this->c->database->input_params = $input_array;
+        } else {
+        	$this->c->database->input_params = '';
         }
         return true;
     }
@@ -157,6 +161,7 @@ class OracleDB
             $this->curs_count                  = 0;
             $this->curs = array();
             $this->c->debug->db = array();
+            //(!isset($this->c->database->input_params))?$this->c->database->input_params=[]:null;
 
             //build the declairations
             $this->buildDeclarations();

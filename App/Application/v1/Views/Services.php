@@ -29,51 +29,13 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace App\Application\Controllers;
+namespace App\Application\v1\Views;
 
-class Services extends \Core\Controller\CoreController
+class Services extends \Core\Presentation\CoreView
 {
-    public function __construct($controller,$action,$container)
+    public function getStates()
     {
-        parent::__construct($controller,$action,$container);
-        $this->c->output->json = true;
-        return true;
-    }
-
-    /**
-    * get the list of colors from the database
-    *
-    */
-    public function getColors()
-    {
-        $this->createModel();
-
-        $this->outputJson($this->c->output->colors);
-        return true;
-    }
-
-    /**
-    * get the list of cities from the database
-    */
-    public function getCities()
-    {
-        $this->createModel();
-
-        $this->outputJson($this->c->output->cities);
-        return true;
-    }
-
-    /**
-    * get the count of votes from the database
-    */
-    public function getVotes($id=false)
-    {
-        $this->c->database->color_id = $id;
-        $this->createModel();
-
-        $this->outputJson($this->c->output->votes);
         return true;
     }
 
 }
-?>
