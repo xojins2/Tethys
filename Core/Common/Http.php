@@ -124,6 +124,12 @@ trait Http
         } else
             $version = false;
 
+		//if the query string contains xdebug, get rid of it
+        if(preg_match('/XDEBUG_SESSION_START/',$urlArray[0])){
+            array_shift($urlArray);
+        } else
+            $version = false;
+
         $controller = $urlArray[0];
 
         //check to see if the controller is null and set it to the login page

@@ -34,8 +34,12 @@ $c->server->db_user        = 'local_dev';   //oracle schema name
 $c->server->db_pass        = 'password';     //db password
 $c->server->db_name        = '//192.168.56.110:1521/orcl';   //db server to access
 $c->server->http           = 'http://';  //use http or https
-$c->server->app_path       = '/media/sf_Source/testcode/Tethys';   //the path on the filesystem where the controllers folder is
-$c->server->ds             = '/';   //the directory seperator to use based on the operating system
+$c->server->app_path       = 'C:\Users\xojin\Source\Repos\Tethys';   //the path on the filesystem where the controllers folder is
+$c->server->version        = 'v1';   //the default version to run the application under
+
+//Database settings
+//$c->server->db_type = '\Core\Database\OracleDB';
+$c->server->db_type = '\Core\Database\StubDB';        //uses JSON stub data
 
 //application settings
 $c->settings->core_version   = '14.1.1.1';   //app version

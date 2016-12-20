@@ -36,6 +36,7 @@ $c->server->url        = '';   //http request var to access the uri
 $c->server->logout_url = '/Index/logout';   //the url using the servername for logging out
 $c->server->no_auth_url    = '/Index/unauthorized';   //the controller action that defines a failed auth attempt
 $c->server->login_url  = '/Index';   //the url for loggin into the system
+$c->server->ds             = '\\';   //the directory seperator to use based on the operating system
 
 //database
 $c->database->persistant = false;
@@ -46,7 +47,7 @@ $c->database->persistant = false;
 $c->server->name = str_replace('www.', '', $_SERVER['SERVER_NAME']);
 
 //set the file to load
-$server_file = '../Config/' . $c->server->name . '.php';
+$server_file = '..'.$c->server->ds.'Config'.$c->server->ds . $c->server->name . '.php';
 
 //load the config file for that server
 if(file_exists($server_file)) {
